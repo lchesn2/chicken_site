@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* Prevent scroll bleed on iOS */
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Smooth scrolling inside overflow panels */
+.scroll-smooth-ios {
+  -webkit-overflow-scrolling: touch;
+}

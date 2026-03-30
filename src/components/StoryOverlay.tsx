@@ -42,7 +42,7 @@ export default function StoryOverlay({
   }
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col items-center justify-end px-4 pb-5">
+    <div className="absolute inset-0 z-20 flex flex-col items-center px-4 pb-5 pt-16">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -53,8 +53,11 @@ export default function StoryOverlay({
         ✕
       </button>
 
-      {/* Animated page card — direction-aware slide */}
-      <div className="w-full max-w-sm relative" style={{ minHeight: 0 }}>
+      {/* Spacer — pushes card+controls toward bottom */}
+      <div className="flex-1" />
+
+      {/* Animated page card — shrinks if needed, never hides controls */}
+      <div className="w-full max-w-sm flex-shrink min-h-0 relative">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentPage}
@@ -69,20 +72,24 @@ export default function StoryOverlay({
             exit="exit"
             transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
           >
-            <StoryPageCard page={page} />
+            <StoryPageCard
+              page={page}
+              onBack={goBack}
+              onNext={goNext}
+              isFirst={currentPage === 1}
+              isLast={currentPage === total}
+            />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Controls */}
-      <StoryControls
-        currentPage={currentPage}
-        total={total}
-        onBack={goBack}
-        onNext={goNext}
-        isLast={currentPage === total}
-        onClose={onClose}
-      />
+      {/* Dots only — buttons are now inside the card */}
+      <div className="w-full max-w-sm flex-shrink-0">
+        <StoryControls
+          currentPage={currentPage}
+          total={total}
+        />
+      </div>
     </div>
   )
 }

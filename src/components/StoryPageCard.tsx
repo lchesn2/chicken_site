@@ -3,23 +3,25 @@ import { sceneMap } from '../data'
 
 interface StoryPageCardProps {
   page: StoryPage
+  onBack: () => void
+  onNext: () => void
+  isFirst: boolean
+  isLast: boolean
 }
 
 function isShortPause(line: string) {
   return line.length < 28 && !line.endsWith(':')
 }
 
-export default function StoryPageCard({ page }: StoryPageCardProps) {
+export default function StoryPageCard({ page, onBack, onNext, isFirst, isLast }: StoryPageCardProps) {
   const scene = sceneMap[page.scene]
 
   return (
     <div
       className="w-full rounded-2xl overflow-hidden mb-3"
       style={{
-        maxHeight: '62vh',
-        // Solid warm paper — no translucency competing with scene
+        maxHeight: '62dvh',
         background: '#fffdf4',
-        // Strong shadow lifts card clearly off the background
         boxShadow:
           '0 22px 64px rgba(10,5,0,0.52), 0 6px 18px rgba(10,5,0,0.28), 0 0 0 1px rgba(160,120,40,0.18)',
       }}
@@ -27,9 +29,9 @@ export default function StoryPageCard({ page }: StoryPageCardProps) {
       {/* Top accent bar */}
       <div className="h-1.5 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300" />
 
+      <div className="flex flex-col" style={{ height: 'calc(62dvh - 6px)' }}>
       <div
-        className="px-5 pt-4 pb-5 overflow-y-auto scroll-smooth-ios"
-        style={{ maxHeight: 'calc(62vh - 6px)' }}
+        className="flex-1 min-h-0 px-5 pt-4 pb-2 overflow-y-auto scroll-smooth-ios"
       >
         <p className="text-xs text-amber-600 uppercase tracking-widest font-sans font-semibold mb-3">
           {scene.tone}
@@ -95,6 +97,28 @@ export default function StoryPageCard({ page }: StoryPageCardProps) {
             </p>
           )
         })}
+      </div>
+
+        {/* Fade gradient hinting scrollable content above */}
+        <div className="pointer-events-none h-6 -mt-6 relative z-10 bg-gradient-to-t from-[#fffdf4] to-transparent" />
+
+        {/* Navigation buttons — always visible, pinned at card bottom */}
+        <div className="px-5 pb-4 pt-1 flex gap-3">
+          <button
+            onClick={onBack}
+            className="flex-1 py-3 rounded-xl bg-stone-100 text-stone-600 font-semibold
+              text-sm shadow-sm active:scale-95 transition-transform"
+          >
+            {isFirst ? '← Back to Yard' : '← Back'}
+          </button>
+          <button
+            onClick={onNext}
+            className="flex-[2] py-3 rounded-xl bg-red-800 text-amber-50 font-bold
+              text-sm shadow active:scale-95 transition-transform"
+          >
+            {isLast ? 'Back to Coop 🐔' : 'Next 🥚'}
+          </button>
+        </div>
       </div>
     </div>
   )

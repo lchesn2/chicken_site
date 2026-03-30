@@ -20,6 +20,7 @@ export default function BarnWall({
   soundEnabled = false,
 }: BarnWallProps) {
   const [removedIds, setRemovedIds] = useState<number[]>([])
+  const [revealedIds, setRevealedIds] = useState<number[]>([])
   const play = useSoundPlayer(soundEnabled)
 
   const removeOne = (i: number) => {
@@ -39,6 +40,7 @@ export default function BarnWall({
 
   const handleReset = () => {
     setRemovedIds([])
+    setRevealedIds([])
     onResetRules()
   }
 
@@ -87,18 +89,23 @@ export default function BarnWall({
                       return (
                         <motion.button
                           key={i}
-                          initial={{ rotate: rotations[i], opacity: 1, x: 0 }}
+                          initial={{ rotate: rotations[i], opacity: 1, x: 0, y: 0, scale: 1 }}
                           exit={{
                             opacity: 0,
-                            x: 70,
-                            rotate: rotations[i] + 14,
-                            transition: { duration: 0.32, ease: 'easeIn' },
+                            x: 88,
+                            y: -14,
+                            scale: 1.04,
+                            rotate: rotations[i] + 22,
+                            transition: { duration: 0.36, ease: [0.32, 0, 0.67, 0] },
                           }}
                           onClick={() => removeOne(i)}
                           className="w-full text-left px-4 py-3.5 rounded-lg font-sans text-stone-700
-                            text-sm font-medium shadow-sm border bg-yellow-50 border-yellow-300
-                            active:scale-95 hover:bg-yellow-100 transition-colors"
-                          style={{ originX: 0 }}
+                            text-sm font-medium border bg-amber-50 border-amber-200
+                            active:scale-95 hover:bg-amber-100 transition-colors"
+                          style={{
+                            originX: 0,
+                            boxShadow: '0 2px 6px rgba(120,80,10,0.12), 0 1px 2px rgba(120,80,10,0.08)',
+                          }}
                           aria-label={`Remove rule: ${rule}`}
                         >
                           {rule}
@@ -128,30 +135,52 @@ export default function BarnWall({
                 transition={{ duration: 0.35, delay: 0.1 }}
               >
                 <div className="pt-4 flex flex-col gap-3">
-                  {newRules.map((rule, idx) => (
-                    <motion.div
-                      key={rule.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25, delay: idx * 0.06 }}
-                      className="border border-amber-200 rounded-xl px-4 py-3.5 bg-white shadow-sm"
-                    >
-                      <div className="flex items-start gap-2 mb-1.5">
-                        <span className="font-sans text-amber-500 font-bold text-sm flex-shrink-0">
-                          {rule.id}.
-                        </span>
-                        <h3 className="font-serif text-stone-800 font-semibold text-base leading-snug">
-                          {rule.title}
-                        </h3>
-                      </div>
-                      <p className="font-sans text-stone-600 text-sm ml-5 mb-2 leading-relaxed">
-                        {rule.description}
-                      </p>
-                      <p className="font-sans text-sm ml-5 text-amber-700 italic">
-                        &ldquo;{rule.phrase}&rdquo;
-                      </p>
-                    </motion.div>
-                  ))}
+                  {newRules.map((rule, idx) => {
+                    const revealed = revealedIds.includes(rule.id)
+                    return (
+                      <motion.button
+                        key={rule.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, delay: idx * 0.06 }}
+                        onClick={() => !revealed && setRevealedIds(prev => [...prev, rule.id])}
+                        className="w-full text-left border border-amber-200 rounded-xl px-4 py-3.5 bg-white shadow-sm active:scale-[0.98] transition-transform"
+                      >
+                        <div className="flex items-start gap-2 mb-1.5">
+                          <span className="font-sans text-amber-500 font-bold text-sm flex-shrink-0">
+                            {rule.id}.
+                          </span>
+                          <h3 className="font-serif text-stone-800 font-semibold text-base leading-snug">
+                            {rule.title}
+                          </h3>
+                        </div>
+                        <p className="font-sans text-stone-600 text-sm ml-5 leading-relaxed">
+                          {rule.description}
+                        </p>
+                        <AnimatePresence>
+                          {revealed ? (
+                            <motion.p
+                              key="phrase"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              transition={{ duration: 0.22 }}
+                              className="font-sans text-sm ml-5 mt-2 text-amber-700 italic overflow-hidden"
+                            >
+                              &ldquo;{rule.phrase}&rdquo;
+                            </motion.p>
+                          ) : (
+                            <motion.p
+                              key="hint"
+                              exit={{ opacity: 0 }}
+                              className="text-xs text-stone-400 ml-5 mt-1.5"
+                            >
+                              tap to reveal →
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </motion.button>
+                    )
+                  })}
                 </div>
 
                 <button

@@ -5,7 +5,6 @@ interface StoryPageCardProps {
   page: StoryPage
 }
 
-// Short lines that should have extra breathing room (pauses in the story)
 function isShortPause(line: string) {
   return line.length < 28 && !line.endsWith(':')
 }
@@ -15,24 +14,31 @@ export default function StoryPageCard({ page }: StoryPageCardProps) {
 
   return (
     <div
-      className="w-full bg-amber-50 rounded-2xl shadow-2xl overflow-hidden mb-3"
-      style={{ maxHeight: '62vh' }}
+      className="w-full rounded-2xl overflow-hidden mb-3"
+      style={{
+        maxHeight: '62vh',
+        // Solid warm paper — no translucency competing with scene
+        background: '#fffdf4',
+        // Strong shadow lifts card clearly off the background
+        boxShadow:
+          '0 22px 64px rgba(10,5,0,0.52), 0 6px 18px rgba(10,5,0,0.28), 0 0 0 1px rgba(160,120,40,0.18)',
+      }}
     >
-      {/* Top color bar — scene mood accent */}
+      {/* Top accent bar */}
       <div className="h-1.5 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300" />
 
-      <div className="px-5 pt-4 pb-5 overflow-y-auto scroll-smooth-ios" style={{ maxHeight: 'calc(62vh - 6px)' }}>
-        {/* Scene mood tag */}
+      <div
+        className="px-5 pt-4 pb-5 overflow-y-auto scroll-smooth-ios"
+        style={{ maxHeight: 'calc(62vh - 6px)' }}
+      >
         <p className="text-xs text-amber-600 uppercase tracking-widest font-sans font-semibold mb-3">
           {scene.tone}
         </p>
 
-        {/* Headline — storybook serif */}
         <h2 className="font-serif text-[1.35rem] font-semibold text-stone-800 leading-snug mb-4">
           {page.title}
         </h2>
 
-        {/* Intro lines */}
         {page.intro?.map((line, i) => (
           <p
             key={i}
@@ -44,7 +50,6 @@ export default function StoryPageCard({ page }: StoryPageCardProps) {
           </p>
         ))}
 
-        {/* First bullet list */}
         {page.bullets && (
           <ul className="mb-3 ml-1 space-y-1">
             {page.bullets.map((item, i) => (
@@ -56,14 +61,12 @@ export default function StoryPageCard({ page }: StoryPageCardProps) {
           </ul>
         )}
 
-        {/* Lead-in to second list (page 5 only) */}
         {page.closingIntro && (
           <p className="font-sans text-stone-700 text-sm leading-relaxed mt-3 mb-2">
             {page.closingIntro}
           </p>
         )}
 
-        {/* Second bullet list (page 5 only) */}
         {page.secondBullets && (
           <ul className="mb-3 ml-1 space-y-1">
             {page.secondBullets.map((item, i) => (
@@ -75,7 +78,6 @@ export default function StoryPageCard({ page }: StoryPageCardProps) {
           </ul>
         )}
 
-        {/* Closing lines */}
         {page.closing?.map((line, i) => {
           const isHighlight = line.includes('🥚') || line.includes('🐔')
           return (

@@ -115,7 +115,7 @@ export const storyPages: StoryPage[] = [
   {
     id: 6,
     slug: "the-wise-hen",
-    title: "Eventually, one wise and slightly exhausted hen paused mid-cluck and said:",
+    title: "Eventually, one hen paused mid-cluck and said:",
     intro: [
       "“What if… we simply stopped chirping so much?”",
       "The coop fell silent."
